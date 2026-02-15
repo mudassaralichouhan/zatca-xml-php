@@ -1,0 +1,1111 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Simplified ZATCA Invoice",
+  "type": "object",
+  "required": [
+    "note",
+    "note_language_id",
+    "issue_date",
+    "issue_time",
+    "invoice_sub_type",
+    "payment_means_code",
+    "invoice_type",
+    "currency_code",
+    "accounting_supplier_party",
+    "accounting_customer_party",
+    "allowance_charges",
+    "tax_totals",
+    "legal_monetary_total",
+    "invoice_lines"
+  ],
+  "properties": {
+    "invoice_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 30
+    },
+    "uuid": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89ABab][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"
+    },
+    "note": {
+      "type": "string",
+      "maxLength": 255
+    },
+    "note_language_id": {
+      "type": "string",
+      "enum": [
+        "ar",
+        "en"
+      ]
+    },
+    "issue_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "issue_time": {
+      "type": "string",
+      "pattern": "^(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d$"
+    },
+    "invoice_sub_type": {
+      "type": "object",
+      "properties": {
+        "simplified": {
+          "type": "boolean"
+        },
+        "third_party": {
+          "type": "boolean"
+        },
+        "nominal": {
+          "type": "boolean"
+        },
+        "exports": {
+          "type": "boolean"
+        },
+        "summary": {
+          "type": "boolean"
+        },
+        "self_billed": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "simplified",
+        "third_party",
+        "nominal",
+        "exports",
+        "summary",
+        "self_billed"
+      ],
+      "additionalProperties": false
+    },
+    "payment_means_code": {
+      "type": "string",
+      "enum": [
+        "cash",
+        "credit",
+        "bank_account",
+        "bank_card"
+      ]
+    },
+    "invoice_type": {
+      "type": "string",
+      "enum": [
+        "invoice",
+        "credit",
+        "debit"
+      ]
+    },
+    "currency_code": {
+      "type": "string",
+      "pattern": "^[A-Z]{3}$"
+    },
+    "accounting_supplier_party": {
+      "$ref": "#/definitions/AccountingSupplierParty"
+    },
+    "accounting_customer_party": {
+      "$ref": "#/definitions/AccountingCustomerParty"
+    },
+    "delivery": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/Delivery"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "allowance_charges": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/AllowanceCharge"
+      }
+    },
+    "tax_totals": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/TaxTotal"
+      }
+    },
+    "legal_monetary_total": {
+      "$ref": "#/definitions/LegalMonetaryTotal"
+    },
+    "invoice_lines": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/InvoiceLine"
+      }
+    },
+    "instruction_note": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "billing_reference": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "invoice_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 30
+            },
+            "issue_date": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          "required": [
+            "invoice_id",
+            "issue_date"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "oneOf": [
+    {
+      "properties": {
+        "invoice_sub_type": {
+          "properties": {
+            "simplified": {
+              "const": false
+            }
+          }
+        },
+        "accounting_customer_party": {
+          "type": "object",
+          "properties": {
+            "postal_address": {
+              "$ref": "#/definitions/PostalAddress"
+            },
+            "party_tax_scheme": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PartyTaxScheme"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "party_legal_entity": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PartyLegalEntity"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "party_identification": {
+              "$ref": "#/definitions/PartyIdentification"
+            }
+          },
+          "required": [
+            "postal_address",
+            "party_identification"
+          ]
+        }
+      }
+    },
+    {
+      "properties": {
+        "invoice_sub_type": {
+          "properties": {
+            "simplified": {
+              "const": true
+            }
+          }
+        },
+        "accounting_customer_party": {
+          "type": "object",
+          "properties": {
+            "postal_address": {
+              "$ref": "#/definitions/PostalAddress"
+            },
+            "party_tax_scheme": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PartyTaxScheme"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "party_legal_entity": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/PartyLegalEntity"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "postal_address"
+          ],
+          "additionalProperties": false
+        }
+      }
+    }
+  ],
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "invoice_sub_type": {
+            "properties": {
+              "simplified": {
+                "const": false
+              }
+            }
+          }
+        },
+        "required": [
+          "invoice_sub_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "accounting_customer_party": {
+            "type": "object",
+            "properties": {
+              "postal_address": {
+                "$ref": "#/definitions/PostalAddress"
+              },
+              "party_tax_scheme": {
+                "anyOf": [
+                  {
+                    "$ref": "#/definitions/PartyTaxScheme"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "party_legal_entity": {
+                "anyOf": [
+                  {
+                    "$ref": "#/definitions/PartyLegalEntity"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "party_identification": {
+                "$ref": "#/definitions/PartyIdentification"
+              }
+            },
+            "required": [
+              "postal_address",
+              "party_identification"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "invoice_sub_type": {
+            "properties": {
+              "simplified": {
+                "const": true
+              }
+            }
+          }
+        },
+        "required": [
+          "invoice_sub_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "accounting_customer_party": {
+            "type": "object",
+            "properties": {
+              "postal_address": {
+                "$ref": "#/definitions/PostalAddress"
+              },
+              "party_tax_scheme": {
+                "anyOf": [
+                  {
+                    "$ref": "#/definitions/PartyTaxScheme"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "party_legal_entity": {
+                "anyOf": [
+                  {
+                    "$ref": "#/definitions/PartyLegalEntity"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "postal_address"
+            ],
+            "not": {
+              "required": [
+                "party_identification"
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "invoice_sub_type": {
+            "properties": {
+              "simplified": {
+                "const": true
+              }
+            }
+          }
+        },
+        "required": [
+          "invoice_sub_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "accounting_customer_party": {
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/definitions/AccountingCustomerParty"
+              }
+            ]
+          }
+        }
+      },
+      "else": {
+        "required": [
+          "accounting_customer_party",
+          "delivery"
+        ],
+        "properties": {
+          "accounting_customer_party": {
+            "allOf": [
+              {
+                "$ref": "#/definitions/AccountingCustomerParty"
+              },
+              {
+                "required": [
+                  "party_identification"
+                ],
+                "properties": {
+                  "party_identification": {
+                    "$ref": "#/definitions/PartyIdentification"
+                  }
+                }
+              }
+            ]
+          },
+          "delivery": {
+            "not": {
+              "type": "null"
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "invoice_sub_type": {
+            "properties": {
+              "simplified": {
+                "const": false
+              }
+            }
+          }
+        },
+        "required": [
+          "invoice_sub_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "accounting_customer_party": {
+            "allOf": [
+              {
+                "$ref": "#/definitions/AccountingCustomerParty"
+              },
+              {
+                "required": [
+                  "party_identification"
+                ],
+                "properties": {
+                  "party_identification": {
+                    "$ref": "#/definitions/PartyIdentification"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "invoice_type": {
+            "enum": [
+              "credit",
+              "debit"
+            ]
+          }
+        },
+        "required": [
+          "invoice_type"
+        ]
+      },
+      "then": {
+        "properties": {
+          "instruction_note": {
+            "type": "string",
+            "default": "Refunded because customer ordered by mistake"
+          },
+          "billing_reference": {
+            "type": "object",
+            "properties": {
+              "invoice_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 30
+              },
+              "issue_date": {
+                "type": "string",
+                "format": "date"
+              }
+            },
+            "required": [
+              "invoice_id",
+              "issue_date"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "instruction_note",
+          "billing_reference"
+        ]
+      }
+    }
+  ],
+  "definitions": {
+    "PostalAddress": {
+      "type": "object",
+      "properties": {
+        "street_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "building_number": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "plot_identification": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "city_subdivision_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "city_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "postal_zone": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "country_subentity": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "additional_street_name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "country_identification_code": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[A-Z]{2}$"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "PartyIdentification": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 10,
+          "pattern": "^[0-9]{10}$"
+        },
+        "scheme_id": {
+          "type": "string",
+          "enum": [
+            "CRN",
+            "700",
+            "TIN",
+            "NAT",
+            "IQA"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "scheme_id"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "scheme_id": {
+                "const": "CRN"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "id": {
+                "pattern": "^[0-9]{10}$"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "scheme_id": {
+                "const": "700"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "id": {
+                "pattern": "^7[0-9]{9}$"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "scheme_id": {
+                "const": "TIN"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "id": {
+                "pattern": "^3[0-9]{9}$"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "scheme_id": {
+                "const": "NAT"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "id": {
+                "pattern": "^1[0-9]{9}$"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "scheme_id": {
+                "const": "IQA"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "id": {
+                "pattern": "^2[0-9]{9}$"
+              }
+            }
+          }
+        }
+      ],
+      "anyOf": [
+        {
+          "properties": {
+            "scheme_id": {
+              "const": "CRN"
+            },
+            "id": {
+              "pattern": "^[0-9]{10}$"
+            }
+          }
+        },
+        {
+          "properties": {
+            "scheme_id": {
+              "const": "700"
+            },
+            "id": {
+              "pattern": "^7[0-9]{9}$"
+            }
+          }
+        },
+        {
+          "properties": {
+            "scheme_id": {
+              "const": "TIN"
+            },
+            "id": {
+              "pattern": "^3[0-9]{9}$"
+            }
+          }
+        },
+        {
+          "properties": {
+            "scheme_id": {
+              "const": "NAT"
+            },
+            "id": {
+              "pattern": "^1[0-9]{9}$"
+            }
+          }
+        },
+        {
+          "properties": {
+            "scheme_id": {
+              "const": "IQA"
+            },
+            "id": {
+              "pattern": "^2[0-9]{9}$"
+            }
+          }
+        }
+      ]
+    },
+    "PartyTaxScheme": {
+      "type": "object",
+      "properties": {
+        "company_id": {
+          "type": "string",
+          "minLength": 15,
+          "maxLength": 15,
+          "pattern": "^3\\d{13}3$"
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "additionalProperties": false
+    },
+    "PartyLegalEntity": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "registration_name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255
+            }
+          },
+          "required": [
+            "registration_name"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "AccountingSupplierParty": {
+      "type": "object",
+      "properties": {
+        "postal_address": {
+          "$ref": "#/definitions/PostalAddress"
+        },
+        "party_identification": {
+          "$ref": "#/definitions/PartyIdentification"
+        }
+      },
+      "required": [
+        "postal_address"
+      ],
+      "additionalProperties": false
+    },
+    "AccountingCustomerParty": {
+      "type": "object",
+      "properties": {
+        "postal_address": {
+          "$ref": "#/definitions/PostalAddress"
+        },
+        "party_tax_scheme": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/PartyTaxScheme"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "party_legal_entity": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/PartyLegalEntity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "party_identification": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/PartyIdentification"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "postal_address"
+      ]
+    },
+    "Delivery": {
+      "type": "object",
+      "properties": {
+        "actual_delivery_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "latest_delivery_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date",
+          "formatExclusiveMinimum": {
+            "$data": "1/actual_delivery_date"
+          }
+        }
+      },
+      "required": [
+        "actual_delivery_date"
+      ],
+      "additionalProperties": false
+    },
+    "AllowanceCharge": {
+      "type": "object",
+      "properties": {
+        "charge_indicator": {
+          "type": "boolean"
+        },
+        "allowance_charge_reason": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "string"
+        },
+        "currency_id": {
+          "type": "string"
+        },
+        "tax_categories": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "tax_percent": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "tax_percent"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "charge_indicator",
+        "allowance_charge_reason",
+        "amount",
+        "currency_id",
+        "tax_categories"
+      ],
+      "additionalProperties": false
+    },
+    "TaxCategory": {
+      "type": "object",
+      "properties": {
+        "tax_percent": {
+          "type": "string"
+        },
+        "tax_exemption_reason_code": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tax_exemption_reason": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "tax_percent"
+      ],
+      "additionalProperties": false
+    },
+    "TaxTotal": {
+      "type": "object",
+      "properties": {
+        "tax_amount": {
+          "type": "string"
+        },
+        "tax_subtotal_amount": {
+          "type": "string"
+        },
+        "taxable_amount": {
+          "type": "string"
+        },
+        "tax_category": {
+          "$ref": "#/definitions/TaxCategory"
+        }
+      },
+      "required": [
+        "tax_amount"
+      ],
+      "additionalProperties": false
+    },
+    "LegalMonetaryTotal": {
+      "type": "object",
+      "properties": {
+        "line_extension_amount": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]{2}$"
+        },
+        "tax_exclusive_amount": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]{2}$"
+        },
+        "tax_inclusive_amount": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]{2}$"
+        },
+        "allowance_total_amount": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]{2}$"
+        },
+        "prepaid_amount": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]{2}$"
+        },
+        "payable_amount": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]{2}$"
+        }
+      },
+      "required": [
+        "line_extension_amount",
+        "tax_exclusive_amount",
+        "tax_inclusive_amount",
+        "allowance_total_amount",
+        "prepaid_amount",
+        "payable_amount"
+      ],
+      "additionalProperties": false
+    },
+    "InvoiceLine": {
+      "type": "object",
+      "properties": {
+        "invoiced_quantity": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9999
+        },
+        "invoiced_quantity_unit_code": {
+          "type": "string"
+        },
+        "line_extension_amount": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]{2}$"
+        },
+        "tax_total": {
+          "type": "object",
+          "properties": {
+            "tax_amount": {
+              "type": "string",
+              "pattern": "^[0-9]+\\.[0-9]{2}$"
+            },
+            "rounding_amount": {
+              "type": "string",
+              "pattern": "^[0-9]+\\.[0-9]{2}$"
+            }
+          },
+          "required": [
+            "tax_amount",
+            "rounding_amount"
+          ],
+          "additionalProperties": false
+        },
+        "item": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "name"
+          ],
+          "additionalProperties": false
+        },
+        "price": {
+          "type": "object",
+          "properties": {
+            "price_amount": {
+              "type": "string",
+              "pattern": "^[0-9]+\\.[0-9]{2}$"
+            },
+            "allowance_charge": {
+              "type": "object",
+              "properties": {
+                "charge_indicator": {
+                  "type": "boolean"
+                },
+                "allowance_charge_reason": {
+                  "type": "string",
+                  "enum": [
+                    "discount"
+                  ]
+                },
+                "amount": {
+                  "type": "string",
+                  "pattern": "^[0-9]+\\.[0-9]{2}$"
+                },
+                "currency_id": {
+                  "type": "string",
+                  "enum": [
+                    "SAR",
+                    "USD"
+                  ]
+                },
+                "tax_category": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/definitions/TaxCategory"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "add_tax_category": {
+                  "type": "boolean"
+                },
+                "add_id": {
+                  "type": "boolean"
+                },
+                "tax_categories": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/TaxCategory"
+                  }
+                }
+              },
+              "required": [
+                "charge_indicator",
+                "allowance_charge_reason",
+                "amount",
+                "currency_id",
+                "add_tax_category",
+                "add_id",
+                "tax_categories"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "price_amount",
+            "allowance_charge"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "invoiced_quantity",
+        "invoiced_quantity_unit_code",
+        "line_extension_amount",
+        "tax_total",
+        "item",
+        "price"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

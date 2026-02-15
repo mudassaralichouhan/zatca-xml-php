@@ -1,0 +1,81 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": [
+    "otp",
+    "common_name",
+    "organization_identifier",
+    "organization_name",
+    "organization_unit",
+    "country",
+    "address",
+    "business_category",
+    "invoice_type",
+    "egs_solution_name",
+    "egs_model",
+    "egs_serial_number"
+  ],
+  "properties": {
+    "otp": {
+      "type": "string",
+      "pattern": "^[0-9]{6}$"
+    },
+    "common_name": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 255
+    },
+    "organization_identifier": {
+      "type": "string",
+      "minLength": 15,
+      "maxLength": 15
+    },
+    "organization_name": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 255
+    },
+    "organization_unit": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 15
+    },
+    "country": {
+      "type": "string",
+      "pattern": "^[A-Z]{2}$"
+    },
+    "address": {
+      "type": "string",
+      "minLength": 5
+    },
+    "business_category": {
+      "type": "string",
+      "minLength": 3
+    },
+    "invoice_type": {
+      "type": "string",
+      "enum": [
+        "1100",
+        "380",
+        "381",
+        "383"
+      ]
+    },
+    "egs_solution_name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 50
+    },
+    "egs_model": {
+      "type": "string",
+      "minLength": 6,
+      "maxLength": 20
+    },
+    "egs_serial_number": {
+      "type": "string",
+      "minLength": 6,
+      "maxLength": 50
+    }
+  },
+  "additionalProperties": false
+}

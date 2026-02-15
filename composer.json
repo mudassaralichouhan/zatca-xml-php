@@ -1,0 +1,43 @@
+{
+    "name": "zatca/zatca-php",
+    "require": {
+        "ext-xmlwriter": "*",
+        "ext-openssl": "*",
+        "ext-dom": "*",
+        "phpseclib/phpseclib": "^3.0",
+        "ext-curl": "*",
+        "ext-http": "*",
+        "opis/json-schema": "^2.4",
+        "monolog/monolog": "^3.9",
+        "nyholm/psr7": "^1.8",
+        "ext-pdo": "*",
+        "nyholm/psr7-server": "^1.1",
+        "illuminate/database": "^12.13",
+        "illuminate/events": "^12.13",
+        "illuminate/contracts": "^12.13",
+        "illuminate/pagination": "^12.13",
+        "illuminate/support": "^12.13",
+        "ext-ctype": "*",
+        "justinrainbow/json-schema": "^6.4",
+        "firebase/php-jwt": "^6.11",
+        "phpmailer/phpmailer": "^6.10",
+        "aws/aws-sdk-php": "^3.343",
+        "ext-redis": "*",
+        "predis/predis": "^3.0",
+        "symfony/http-foundation": "^7.3",
+        "symfony/routing": "^7.3",
+        "symfony/rate-limiter": "^7.3",
+        "symfony/cache": "^7.3",
+        "guzzlehttp/guzzle": "^7",
+        "vlucas/phpdotenv": "^5.6"
+    },
+    "autoload": {
+      "psr-4": {
+        "ZATCA\\": "src/",
+        "App\\": "app/"
+      }
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.90"
+    }
+}

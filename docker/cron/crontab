@@ -1,0 +1,5 @@
+# Cleanup unconfirmed accounts every 3 hours
+0 */3 * * * /var/www/html/scripts/run-cleanup.sh >> /var/log/cleanup.log 2>&1
+
+# Optional: Cleanup logs older than 30 days
+0 0 * * 0 find /var/log -name "cleanup.log*" -mtime +30 -delete

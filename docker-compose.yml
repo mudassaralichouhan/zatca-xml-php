@@ -1,0 +1,107 @@
+services:
+  web:
+    build: .
+    volumes:
+      - .:/var/www/html
+    ports:
+      - "8080:80"
+    networks:
+      - zatca_fatoora_network
+    env_file:
+      - .env
+    restart: on-failure
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/api/v1/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+#  minio:
+#    image: minio/minio
+#    ports:
+#      - "9000:9000"
+#      - "9001:9001"
+#    volumes:
+#      - zatca_fatoora_minio_volumes:/data
+#    environment:
+#      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+#      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+#    command: server /data --console-address ":9001"
+#    networks:
+#      - zatca_fatoora_network
+#    restart: unless-stopped
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "63791:6379"
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    command: [ "redis-server", "--requirepass", "${REDIS_PASSWORD}" ]
+    networks:
+      - zatca_fatoora_network
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: mailhog
+    ports:
+      - "1025:1025"   # SMTP
+      - "8025:8025"   # Web UI
+    networks:
+      - zatca_fatoora_network
+    restart: unless-stopped
+
+  cron:
+    build: .
+    volumes:
+      - .:/var/www/html
+      - ./docker/cron/crontab:/etc/cron.d/zatca-cleanup
+      - ./storage/logs:/var/log
+    networks:
+      - zatca_fatoora_network
+    env_file:
+      - .env
+    restart: unless-stopped
+    command: >
+      sh -c "
+        chmod 0644 /etc/cron.d/zatca-cleanup &&
+        crontab /etc/cron.d/zatca-cleanup &&
+        touch /var/log/cleanup.log &&
+        service cron start &&
+        tail -f /var/log/cleanup.log
+      "
+
+#  db:
+#    image: postgres:17
+#    volumes:
+#      - zatca_fatoora_volumes:/var/lib/postgresql/data
+#    environment:
+#      POSTGRES_DB: ${DB_NAME}
+#      POSTGRES_USER: ${DB_USER}
+#      POSTGRES_PASSWORD: ${DB_PASSWORD}
+#    ports:
+#      - "5432:5432"
+#    networks:
+#      - zatca_fatoora_network
+#
+#  pgadmin:
+#    image: dpage/pgadmin4
+#    restart: always
+#    environment:
+#      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+#      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+#    ports:
+#      - '5050:80'
+#    depends_on:
+#      - db
+#    networks:
+#      - zatca_fatoora_network
+
+networks:
+  zatca_fatoora_network:
+    driver: bridge
+
+volumes:
+  zatca_fatoora_volumes:
+  # zatca_fatoora_minio_volumes:
+  zatca_fatoora_redis_volumes:
